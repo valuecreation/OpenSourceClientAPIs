@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>MapLibre GL JS Tutorials: Change the basemap layer</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <script src="./dist/maplibre-gl.js"></script>
+    <link href="./dist/maplibre-gl.css" rel="stylesheet" />
+    <style>
+      html,
+      body,
+      #map {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        color: #323232;
+      }
+
+      #basemaps-wrapper {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0);
+      }
+      #basemaps {
+        font-size: 16px;
+        padding: 4px 8px;
+      }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <div id="basemaps-wrapper">
+
+      <select id="basemaps">
+        <option value="ArcGIS:Streets">Streets</option>
+        <option value="ArcGIS:Navigation">Navigation</option>
+        <option value="ArcGIS:Topographic">Topographic</option>
+        <option value="ArcGIS:LightGray">Light Gray</option>
+        <option value="ArcGIS:DarkGray">Dark gray</option>
+        <option value="ArcGIS:StreetsRelief">Streets Relief</option>
+        <option value="ArcGIS:Imagery:Standard">Imagery</option>
+        <option value="ArcGIS:ChartedTerritory">ChartedTerritory</option>
+        <option value="ArcGIS:ColoredPencil">ColoredPencil</option>
+        <option value="ArcGIS:Nova">Nova</option>
+        <option value="ArcGIS:Midcentury">Midcentury</option>
+        <option value="OSM:Standard">OSM</option>
+        <option value="OSM:Streets">OSM:Streets</option>
+      </select>
+
+    </div>
+    <script>
+
+        const apiKey = "AAPK07c4048cb3bb48d2a98ee544297631b918Z5mh7gBlBL6owpfjx6YzXq2gnRQzTZhhFiahyfSYojOmvFgnbBV-aaZT9S3nCb";
+        const basemapEnum = "ArcGIS:Streets";
+        const map = new maplibregl.Map({
+            container: "map", // the id of the div element
+            style: `https://basemaps-api.arcgis.com/arcgis/rest/services/styles/${basemapEnum}?type=style&token=${apiKey}`,
+            zoom: 9, // starting zoom
+            center: [139.69167, 35.68944], // starting location [longitude, latitude]
+            attributionControl: false,
+            hash: true
+        }).addControl(
+            new maplibregl.AttributionControl({
+            compact: true // reduces the copyright attributions view
+            })
+        );
+
+        map.addControl(new maplibregl.NavigationControl(), 'top-left');
+
+        const baseUrl = "https://basemaps-api.arcgis.com/arcgis/rest/services/styles";
+        const url = (name) => `${baseUrl}/${name}?type=style&token=${apiKey}`;
+
+        const setBasemap = (name) => {
+            // Instantiate the given basemap layer.
+            map.setStyle(url(name));
+        };
+
+        setBasemap("ArcGIS:Streets");
+
+        const basemapsSelectElement = document.querySelector("#basemaps");
+
+        basemapsSelectElement.addEventListener("change", (e) => {
+            setBasemap(e.target.value);
+        });
+
+    </script>
+
+</body>
+
+</html>

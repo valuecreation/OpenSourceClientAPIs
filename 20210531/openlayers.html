@@ -1,0 +1,53 @@
+<!--
+
+To run this demo, you need to replace 'YOUR_API_KEY' with an API key from the ArcGIS Developers dashboard.
+
+Sign up for a free account and get an API key.
+
+https://developers.arcgis.com/documentation/mapping-apis-and-services/get-started/
+
+ --><html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>OpenLayers Tutorials: Display a map</title>
+
+    <style>
+      html,
+      body,
+      #map {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        color: #323232;
+      }
+    </style>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/css/ol.css" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/build/ol.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/ol-mapbox-style@6.1.4/dist/olms.js"></script>
+
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <script>
+
+      const apiKey = "AAPK07c4048cb3bb48d2a98ee544297631b918Z5mh7gBlBL6owpfjx6YzXq2gnRQzTZhhFiahyfSYojOmvFgnbBV-aaZT9S3nCb";
+
+      const basemapId = "ArcGIS:Imagery";
+      const basemapURL = "https://basemaps-api.arcgis.com/arcgis/rest/services/styles/" + basemapId + "/?token=" + apiKey;
+      const map = new ol.Map({
+        target: "map"
+      });
+      olms(map, basemapURL).then((map)=> {});
+
+
+    </script>
+
+  </body>
+</html>
