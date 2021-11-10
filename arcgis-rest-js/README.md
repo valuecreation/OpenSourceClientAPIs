@@ -1,15 +1,17 @@
 # ArcGIS REST JS Express Demo
 
-This demo explains how to trigger OAuth 2.0 via custom server-side code
+NodeJS を使用したサーバーサイドのデモ
+- OAuth 2.0 による ArcGIS Online 認証機構を実装、その認証のトークンを利用したジオコーディングとバッチジオコーディングを実装  
+- おまけとして、API キーによるジオコーディングとバッチジオコーディングも実装
 
 ## Setup
-1. Make sure you run `npm run bootstrap` in the root folder to setup the dependencies
-2. Create a new application on https://developers.arcgis.com
-3. Add `http://localhost:3000/authenticate` as a redirect uri for your application.
-4. Copy the `config.json.template` file, rename it to `config.json`
-5. Copy your application's client id into your new `config.json` file.
+1. npm install
+2. https://developers.arcgis.com のダッシュボードの OAuth 2.0 でアプリを新規に作成
+3. ダッシュボードの API Keys で API キーを作成
+4. 2、3 で設定した内容を `config.json` に設定 
+5. SESSION_SECRET と ENCRYPTION_KEY は、https://randomkeygen.com/ から生成して使用
 
 ## Running the demo
-6. `npm start`
-7. Visit http://localhost:3000/authorize to start the OAuth 2.0 process.
+5. `npm start`
+6. Visit http://localhost:3000/ to start the OAuth 2.0 process.
 
