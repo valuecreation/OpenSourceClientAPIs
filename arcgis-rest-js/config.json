@@ -1,0 +1,6 @@
+{
+  "CLIENT_ID": "",
+  "SESSION_SECRET": "",
+  "ENCRYPTION_KEY": "",
+  "REDIRECT_URI": "http://localhost:3000/authenticate"
+}
