@@ -1,6 +1,6 @@
 {
-  "CLIENT_ID": "cE7yr6rSLvG1yDgD",
-  "SESSION_SECRET": "iN1UBOe1sFyhgqDn6hAUipsbfaooRdcWYL3DdDtkOI",
-  "ENCRYPTION_KEY": "DQ97y48Dv2x2bfTzzXTM1tXXvNH7rtw3",
+  "CLIENT_ID": "",
+  "SESSION_SECRET": "",
+  "ENCRYPTION_KEY": "",
   "REDIRECT_URI": "http://localhost:3000/authenticate"
 }
