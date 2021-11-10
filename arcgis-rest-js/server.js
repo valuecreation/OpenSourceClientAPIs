@@ -17,7 +17,7 @@ const credentials = {
 };
 
 // API キー
-const apiKey = new ApiKey({key: "AAPK4767d2b9b2d9411d9ce0001cb63bd67dIFO1Inj92v630hXNNKs36YHLT7JVLcoPW1sSiRH57oZf4uPXR0LVtHl9ApmuaTx8"});
+const apiKey = new ApiKey({key: ""});
 
 // セッションを保存する
 app.use(
