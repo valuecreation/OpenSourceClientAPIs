@@ -1,0 +1,144 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>CesiumJS: Display a 3D object layer popup</title>
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.110/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.110/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <style>
+      html,
+      body {
+
+          margin: 0px;
+          padding: 0px;
+          height: 100%;
+      }
+      #cesiumContainer {
+          height: 100%;
+      }
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer"></div>
+    <script type="module">
+
+      const apiKey = "AAPK15e9754983a3492e99bbb66f31414e9bc2DkNOcMw6S8oQqn85yGU8UawYs1_7Kt9NRhVakVl0e1xccntGDDURCtjGzpq4b4";
+
+      Cesium.ArcGisMapService.defaultAccessToken = apiKey;
+
+      const cesiumAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2MTYxMGYwZi03OTY3LTQzMTMtOGM4Ny00YTE0YTQ4ZjVjMTEiLCJpZCI6NTc5NCwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU0NDE4OTI5OH0.HhguVRjUnIObzJlxjpD_aVLMDwNS-JGdeEEdixpZfOU';
+
+      Cesium.Ion.defaultAccessToken = cesiumAccessToken;
+
+      const arcGisImagery = Cesium.ArcGisMapServerImageryProvider.fromBasemapType(Cesium.ArcGisBaseMapType.SATELLITE, {
+        enablePickFeatures:false
+      });
+
+      const viewer = new Cesium.Viewer("cesiumContainer", {
+
+          baseLayer: Cesium.ImageryLayer.fromProviderAsync(arcGisImagery),
+
+          terrain: Cesium.Terrain.fromWorldTerrain(),
+          timeline: false,
+          animation: false,
+          geocoder:false
+
+      });
+
+      viewer.camera.setView({
+          destination: Cesium.Cartesian3.fromDegrees(139.767125,35.671236,400),
+          orientation: {
+            heading: Cesium.Math.toRadians(60),
+            pitch: Cesium.Math.toRadians(-15.0),
+          }
+      });
+
+      const geoidService = await Cesium.ArcGISTiledElevationTerrainProvider.fromUrl("https://tiles.arcgis.com/tiles/z2tnIkrLQ2BRzr6P/arcgis/rest/services/EGM2008/ImageServer");
+
+      const i3sLayer = "https://tiles.arcgis.com/tiles/wlVTGRSYTzAbjjiC/arcgis/rest/services/13100_13201_Tokyo-23ku_Minamiosawa_Building/SceneServer";
+
+      const i3sProvider = await Cesium.I3SDataProvider.fromUrl(i3sLayer, {
+          geoidTiledTerrainProvider: geoidService,
+          token: apiKey
+      })
+
+      viewer.scene.primitives.add(i3sProvider);
+
+      // An entity object which will hold info about the currently selected feature for infobox display
+      const selectedEntity = new Cesium.Entity();
+      // Show metadata in the InfoBox.
+      viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(movement) {
+        // Pick a new feature
+        const pickedFeature = viewer.scene.pick(movement.position);
+        if (!Cesium.defined(pickedFeature)) {
+          return;
+        }
+        const pickedPosition = viewer.scene.pickPosition(movement.position);
+
+        if (
+          Cesium.defined(pickedFeature.content) &&
+          Cesium.defined(pickedFeature.content.tile.i3sNode)
+        ) {
+          const i3sNode = pickedFeature.content.tile.i3sNode;
+
+          i3sNode.loadFields().then(function () {
+            const geometry = i3sNode.geometryData[0];
+            if (pickedPosition) {
+              const location = geometry.getClosestPointIndexOnTriangle(
+                pickedPosition.x,
+                pickedPosition.y,
+                pickedPosition.z
+              );
+              let description = "No attributes";
+              let name;
+              if (location.index !== -1 && geometry.customAttributes.featureIndex) {
+                const featureIndex =
+                  geometry.customAttributes.featureIndex[location.index];
+                if (Object.keys(i3sNode.fields).length > 0) {
+                  description =
+                    '<table class="cesium-infoBox-defaultTable"><tbody>';
+                  for (const fieldName in i3sNode.fields) {
+                    if (i3sNode.fields.hasOwnProperty(fieldName)) {
+                      const field = i3sNode.fields[fieldName];
+                      description += `<tr><th>${field.name}</th><td>`;
+                      description += `${field.values[featureIndex]}</td></tr>`;
+                      console.log(
+                        `${field.name}: ${field.values[featureIndex]}`
+                      );
+                      if (
+                        !Cesium.defined(name) &&
+                        isNameProperty(field.name)
+                      ) {
+                        name = field.values[featureIndex];
+                      }
+                    }
+                  }
+                  description += `</tbody></table>`;
+                }
+              }
+              if (!Cesium.defined(name)) {
+                name = "unknown";
+              }
+              selectedEntity.name = name;
+              selectedEntity.description = description;
+              viewer.selectedEntity = selectedEntity;
+            }
+          });
+        }
+
+      },
+      Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+      function isNameProperty(propertyName) {
+        const name = propertyName.toLowerCase();
+        if (
+          name.localeCompare("name") === 0 ||
+          name.localeCompare("objname") === 0
+        ) {
+          return true;
+        }
+        return false;
+      }
+    </script>
+  </body>
+</html>
